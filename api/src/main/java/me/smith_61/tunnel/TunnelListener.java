@@ -1,4 +1,4 @@
-package me.smith_61.bungee.tunnel;
+package me.smith_61.tunnel;
 
 /**
  * 

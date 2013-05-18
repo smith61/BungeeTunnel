@@ -1,6 +1,6 @@
-package me.smith_61.bungee.tunnel.exceptions;
+package me.smith_61.tunnel.exceptions;
 
-import me.smith_61.bungee.tunnel.ServerTunnel;
+import me.smith_61.tunnel.ServerTunnel;
 
 /**
  * 

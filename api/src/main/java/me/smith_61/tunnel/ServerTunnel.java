@@ -1,6 +1,6 @@
-package me.smith_61.bungee.tunnel;
+package me.smith_61.tunnel;
 
-import me.smith_61.bungee.tunnel.exceptions.TunnelClosedException;
+import me.smith_61.tunnel.exceptions.TunnelClosedException;
 
 public interface ServerTunnel {
 
@@ -32,7 +32,7 @@ public interface ServerTunnel {
 	 * 
 	 * @param channel The channel to send the data over
 	 * @param data The data to send
-	 * @param start The offset into the data array to start sending
+	 * @param start The offset into the data array to start
 	 * @param length The length of the data to send
 	 * @param handler The error handler to pass errors to
 	 * 
@@ -54,8 +54,8 @@ public interface ServerTunnel {
 	 * Gets the name of the destination server.
 	 * 
 	 * There are two predefined server names
-	 * 	- BUNGEECORD - This represents the connection to the BungeeCord server
-	 *  - SELF - This represents the connection to this server
+	 * 	- bungeecord - This represents the connection to the BungeeCord server
+	 *  - self - This represents the connection to this server
 	 *  
 	 *  In the case that this is being run on the BungeeCord server this will return
 	 *  	SELF and will never return BUNGEECORD

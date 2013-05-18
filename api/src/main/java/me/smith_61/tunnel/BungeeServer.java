@@ -1,6 +1,6 @@
-package me.smith_61.bungee.tunnel;
+package me.smith_61.tunnel;
 
-import me.smith_61.bungee.tunnel.exceptions.ChannelRegisteredException;
+import me.smith_61.tunnel.exceptions.ChannelRegisteredException;
 
 /**
  * 
@@ -26,8 +26,8 @@ public interface BungeeServer {
 	 * 	or null if no tunnel exists.
 	 * 
 	 * There are two predefined ServerTunnel names
-	 * 	- BUNGEECORD - This represents the connection to the BungeeCord Server
-	 * 	- SELF - This represents the connection to this server
+	 * 	- bungeecord - This represents the connection to the BungeeCord Server
+	 * 	- self - This represents the connection to this server
 	 * 
 	 * In the case that this is running on the BungeeCord Server
 	 * 	they will both return the same connection
