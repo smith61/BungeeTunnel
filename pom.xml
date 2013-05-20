@@ -8,13 +8,16 @@
   	<module>api</module>
   	<module>bukkit</module>
   	<module>bungee</module>
+  	<module>common</module>
+  	<module>server</module>
+  	<module>client</module>
   </modules>
   
   <dependencies>
   	<dependency>
   		<groupId>io.netty</groupId>
   		<artifactId>netty-all</artifactId>
-  		<version>4.0.0.Beta2</version>
+  		<version>${netty.version}</version>
   		<type>jar</type>
   	</dependency>
   	<dependency>
@@ -24,4 +27,7 @@
   		<scope>test</scope>
   	</dependency>
   </dependencies>
+  <properties>
+  	<netty.version>4.0.0.CR1</netty.version>
+  </properties>
 </project>

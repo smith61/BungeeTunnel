@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>BungeeTunnel-Bungee</artifactId>
+	<artifactId>BungeeTunnel-Common</artifactId>
 	<parent>
+		<relativePath>../pom.xml</relativePath>
 		<groupId>me.smith_61</groupId>
 		<artifactId>BungeeTunnel-Parent</artifactId>
 		<version>1.0.0</version>
-		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<build>
 		<plugins>
@@ -23,7 +23,7 @@
 						<configuration>
 							<artifactSet>
 								<includes>
-									<include>me.smith_61:BungeeTunnel-Server</include>
+									<include>me.smith_61:BungeeTunnel-API</include>
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -35,7 +35,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>me.smith_61</groupId>
-			<artifactId>BungeeTunnel-Server</artifactId>
+			<artifactId>BungeeTunnel-API</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

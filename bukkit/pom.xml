@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>me.smith_61</groupId>
-			<artifactId>BungeeTunnel-API</artifactId>
+			<artifactId>BungeeTunnel-Client</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
@@ -41,7 +41,7 @@
 						<configuration>
 							<artifactSet>
 								<includes>
-									<include>me.smith_61:BungeeTunnel-API</include>
+									<include>me.smith_61:BungeeTunnel-Client</include>
 								</includes>
 							</artifactSet>
 						</configuration>
