@@ -164,3 +164,4 @@ pip-log.txt
 
 #Maven build dirs
 target/
+dependency-reduced-pom.xml
