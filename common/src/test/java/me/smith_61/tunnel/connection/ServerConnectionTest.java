@@ -30,7 +30,7 @@ public class ServerConnectionTest {
 	private static class DummyConnection extends ServerConnection {
 		
 		private DummyConnection() {
-			super("DummyConnection");
+			super(null);
 		}
 
 		@Override
