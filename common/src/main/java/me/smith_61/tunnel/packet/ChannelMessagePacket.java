@@ -4,6 +4,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import com.google.common.base.Preconditions;
+
 import me.smith_61.tunnel.exceptions.InvalidPacketException;
 
 /**
@@ -34,6 +36,10 @@ public class ChannelMessagePacket extends Packet {
 	
 	public ChannelMessagePacket(String channel, byte[] data) {
 		super(Packet.MESSAGEPACKET_ID);
+		String format = "%s can not be null.";
+		
+		Preconditions.checkNotNull(channel, format, "Channel");
+		Preconditions.checkNotNull(data, format, "Data");
 		
 		this.channel = channel.toCharArray();
 		this.data = data;

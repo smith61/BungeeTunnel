@@ -18,8 +18,8 @@ public interface TunnelDataListener {
 	 * 	method and any called methods are multithreaded.
 	 * 
 	 * @param data The data received
-	 * @param tunnel The tunnel it was sent over
+	 * @param server The server it was sent from
 	 * @param channel The channel it was sent over
 	 */
-	public void onDataRecieved(byte[] data, ServerTunnel tunnel, String channel);
+	public void onDataRecieved(byte[] data, Server server, String channel);
 }

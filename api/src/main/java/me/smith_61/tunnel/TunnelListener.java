@@ -18,21 +18,20 @@ public interface TunnelListener {
 	 *  same time. You must ensure that this method and 
 	 *  any it calls are multithreaded.
 	 * 
-	 * @param tunnel The tunnel that has been opened
+	 * @param server The server that has been opened
 	 */
-	public void onTunnelOpened(ServerTunnel tunnel);
+	public void onServerOpened(Server server);
 	
 	/**
-	 * Called when a tunnel is closed. The tunnel may still
-	 * 	be open at this time and data could still be sent
-	 * 	over it. This is not a guarantee and the status of
-	 * 	the tunnel should be checked before any data is sent.
+	 * Called when a tunnel is closed. This is send after
+	 * 	the connection to the server has been closed. No
+	 * 	further data can be sent to the server
 	 * 
 	 * This may be called from multiple threads at the
 	 *  same time. You must ensure that this method and 
 	 *  any it calls are multithreaded.
 	 *  
-	 * @param tunnel The tunnel that has closed or is being closed
+	 * @param server The server that has closed or is being closed
 	 */
-	public void onTunnelClosed(ServerTunnel tunnel);
+	public void onServerClosed(Server server);
 }

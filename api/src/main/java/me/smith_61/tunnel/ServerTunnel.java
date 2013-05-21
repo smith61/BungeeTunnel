@@ -51,16 +51,8 @@ public interface ServerTunnel {
 	public boolean isClosed();
 	
 	/**
-	 * Gets the name of the destination server.
-	 * 
-	 * There are two predefined server names
-	 * 	- bungeecord - This represents the connection to the BungeeCord server
-	 *  - self - This represents the connection to this server
-	 *  
-	 *  In the case that this is being run on the BungeeCord server this will return
-	 *  	SELF and will never return BUNGEECORD
-	 *  
-	 * @return The name of the destination server
+	 * Gets the server this connection is to
+	 * @return
 	 */
-	public String getName();
+	public Server getServer();
 }

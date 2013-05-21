@@ -15,6 +15,6 @@ public class TunnelClosedException extends TunnelException {
 	private static final long serialVersionUID = 8282978571578525302L;
 	
 	public TunnelClosedException(ServerTunnel tunnel) {
-		super("Tunnel has been closed: " + tunnel.getName(), tunnel);
+		super("Tunnel has been closed: " + tunnel.getServer().getName(), tunnel);
 	}
 }

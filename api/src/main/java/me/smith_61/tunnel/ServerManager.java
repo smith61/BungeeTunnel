@@ -7,35 +7,50 @@ import me.smith_61.tunnel.exceptions.ChannelRegisteredException;
  * @author Jacob
  * @since 1.0.0
  * 
- * This interface represents a BungeeCord Server hub. It
- * 	manages all server tunnels to all servers
- * 	including a connection to the BungeeCord server
- * 	and the server this is running on
+ * This interface represents a server hub. It manages
+ * 	all servers and their connections.
  */
-public interface BungeeServer {
+public interface ServerManager {
 
 	/**
-	 * Gets all open ServerTunnels
-	 * 
-	 * @return All open ServerTunnels
+	 * String constant that represents the name given to
+	 * 	the server that represents the server this is
+	 * 	running on.
 	 */
-	public ServerTunnel[] getTunnels();
+	public static final String SELF = "self";
+	
+	/**
+	 * String constant that represents the name given to
+	 * 	the bungee server.
+	 */
+	public static final String BUNGEE = "bungeecord";
+	
+	/**
+	 * Gets all available ServerInfos
+	 * 
+	 * @return All available ServerInfos
+	 */
+	public Server[] getServers();
 	
 	/**
 	 * Gets the open ServerTunnel with the given name
 	 * 	or null if no tunnel exists.
 	 * 
 	 * There are two predefined ServerTunnel names
-	 * 	- bungeecord - This represents the connection to the BungeeCord Server
-	 * 	- self - This represents the connection to this server
+	 * 	- bungeecord - This represents the BungeeCord Server.
+	 * 						This may return null if a connection
+	 * 						has no been established to the bungee
+	 * 						server.
+	 * 	- self - This represents this server. This will never
+	 * 				return null when used.
 	 * 
 	 * In the case that this is running on the BungeeCord Server
-	 * 	they will both return the same connection
+	 * 	they will both return the same ServerInfo instance
 	 * 
 	 * @param name
 	 * @return
 	 */
-	public ServerTunnel getTunnel(String name);
+	public Server getServer(String name);
 	
 	/**
 	 * Registers a data listener for the given channel. These are not unregistered

@@ -50,56 +50,65 @@ public abstract class Packet {
 		buf.skipBytes(length);
 	}
 	
-	public static Packet readPacket(byte[] data) throws InvalidPacketException, IOException {
-		DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
-		
-		int id = in.readUnsignedByte();
-		int length = in.readInt();
-		if(id >= PACKET_CLASSES.length || PACKET_CLASSES[id] == null) {
-			//This still assumes that the incoming stream is in the packet format
-			in.skipBytes(length);
-			
-			throw new InvalidPacketException(id);
-		}
-		
-		Constructor<? extends Packet> con = PACKET_CONS[id];
-		if(con == null) {
-			try {
-				con = PACKET_CONS[id] = PACKET_CLASSES[id].getDeclaredConstructor();
-			}
-			catch (NoSuchMethodException e) {
-				in.skipBytes(length);
-				
-				throw new InvalidPacketException(PACKET_CLASSES[id]);
-			}
-		}
-		
-		Packet p = null;
+	public static Packet readPacket(byte[] data) throws InvalidPacketException {
 		try {
-			p = con.newInstance();
+			DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
+			
+			int id = in.readUnsignedByte();
+			int length = in.readInt();
+			if(id >= PACKET_CLASSES.length || PACKET_CLASSES[id] == null) {
+				throw new InvalidPacketException(id);
+			}
+			
+			Constructor<? extends Packet> con = PACKET_CONS[id];
+			if(con == null) {
+				try {
+					con = PACKET_CONS[id] = PACKET_CLASSES[id].getDeclaredConstructor();
+				}
+				catch (NoSuchMethodException e) {
+					in.skipBytes(length);
+					
+					throw new InvalidPacketException(PACKET_CLASSES[id]);
+				}
+			}
+			
+			Packet p = null;
+			try {
+				p = con.newInstance();
+			}
+			catch(Throwable t) {
+				throw new InvalidPacketException("Exception while creating packet.", t);
+			}
+			
+			p.readPacketData(in);
+			
+			
+			return p;
 		}
-		catch(Throwable t) {
-			throw new InvalidPacketException("Exception while creating packet.", t);
+		catch(IOException ioe) {
+			//Should never reach this
+			throw new InvalidPacketException("IOException while reading packet.", ioe);
 		}
-		
-		p.readPacketData(in);
-		
-		
-		return p;
 	}
 	
-	public static byte[] writePacket(Packet p) throws IOException {
-		if(!p.canWrite()) {
-			throw new RuntimeException("Can not write packet: " + p);
+	public static byte[] writePacket(Packet p) {
+		try {
+			if(!p.canWrite()) {
+				throw new RuntimeException("Can not write packet: " + p);
+			}
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			DataOutputStream dataOut = new DataOutputStream(byteOut);
+			
+			dataOut.writeByte(p.id);
+			dataOut.writeInt(p.getSize());
+			p.writePacketData(dataOut);
+			
+			return byteOut.toByteArray();
 		}
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		DataOutputStream dataOut = new DataOutputStream(byteOut);
-		
-		dataOut.writeByte(p.id);
-		dataOut.writeInt(p.getSize());
-		p.writePacketData(dataOut);
-		
-		return byteOut.toByteArray();
+		catch(IOException ioe) {
+			//Should never reach this
+			throw new RuntimeException(ioe);
+		}
 	}
 	
 	public static Class<? extends Packet> getPacketClass(int id) {
@@ -120,7 +129,6 @@ public abstract class Packet {
 	public static final int MESSAGEPACKET_ID = 0x02;
 	
 	static {
-		PACKET_CLASSES[0] = TestPacket.class;
 		PACKET_CLASSES[TUNNELEDPACKET_ID] = TunneledPacket.class;
 		PACKET_CLASSES[MESSAGEPACKET_ID] = ChannelMessagePacket.class;
 	}
