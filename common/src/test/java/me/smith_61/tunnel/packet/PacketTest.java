@@ -12,12 +12,12 @@ public class PacketTest {
 
 	@Test
 	public void testWrite() throws IOException {
-		assertNotNull(Packet.writePacket(new ChannelMessagePacket("", new byte[0])));
+		assertNotNull(Packet.writePacket(new ChannelMessagePacket("", "", "", new byte[0])));
 	}
 
 	@Test
 	public void testRead() throws InvalidPacketException {
-		byte[] packet = Packet.writePacket(new ChannelMessagePacket("", new byte[0]));
+		byte[] packet = Packet.writePacket(new ChannelMessagePacket("", "", "", new byte[0]));
 		Packet p = Packet.readPacket(packet);
 		
 		assertNotNull(p);
@@ -28,14 +28,14 @@ public class PacketTest {
 	
 	@Test(expected = InvalidPacketException.class)
 	public void testInvalidPacket() throws InvalidPacketException {
-		byte[] packet = new byte[Packet.PACKET_HEADER_LENGTH];
-		packet[0] = Packet.TOTAL_PACKETS + 1;
+		byte[] packet = new byte[1];
+		packet[0] = Packet.TOTAL_PACKETS + 2;
 		Packet.readPacket(packet);
 	}
 	
 	@Test
 	public void testGetPacket() {
-		for(int i=1; i<Packet.TOTAL_PACKETS; i++) {
+		for(int i=1; i<Packet.TOTAL_PACKETS + 1; i++) {
 			assertNotNull(Packet.getPacketClass(i));
 		}
 	}

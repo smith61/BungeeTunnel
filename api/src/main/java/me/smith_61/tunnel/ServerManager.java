@@ -11,13 +11,6 @@ import me.smith_61.tunnel.exceptions.ChannelRegisteredException;
  * 	all servers and their connections.
  */
 public interface ServerManager {
-
-	/**
-	 * String constant that represents the name given to
-	 * 	the server that represents the server this is
-	 * 	running on.
-	 */
-	public static final String SELF = "self";
 	
 	/**
 	 * String constant that represents the name given to
@@ -51,6 +44,13 @@ public interface ServerManager {
 	 * @return
 	 */
 	public Server getServer(String name);
+	
+	/**
+	 * Gets the Server that represents this server
+	 * 
+	 * @return This server
+	 */
+	public Server getThisServer();
 	
 	/**
 	 * Registers a data listener for the given channel. These are not unregistered

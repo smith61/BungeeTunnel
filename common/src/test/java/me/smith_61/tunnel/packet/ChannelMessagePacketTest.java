@@ -7,14 +7,6 @@ import me.smith_61.tunnel.exceptions.InvalidPacketException;
 import org.junit.Test;
 
 public class ChannelMessagePacketTest {
-
-	@Test
-	public void testGetSize() {
-		ChannelMessagePacket packet = new ChannelMessagePacket("T", new byte[1]);
-		
-		//int + int + char + byte
-		assertEquals(4 + 4 + 2 + 1, packet.getSize());
-	}
 	
 	@Test
 	public void testReadWrite() throws InvalidPacketException {
@@ -22,7 +14,7 @@ public class ChannelMessagePacketTest {
 		for(int i=0; i<data.length; i++) {
 			data[i] = (byte)i;
 		}
-		ChannelMessagePacket write = new ChannelMessagePacket("T", data);
+		ChannelMessagePacket write = new ChannelMessagePacket("TestServer", "TestServer", "TestChannel", data);
 		
 		ChannelMessagePacket read = (ChannelMessagePacket)Packet.readPacket(Packet.writePacket(write));
 		

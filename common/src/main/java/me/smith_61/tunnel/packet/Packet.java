@@ -1,7 +1,5 @@
 package me.smith_61.tunnel.packet;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
@@ -11,6 +9,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 
+import me.smith_61.tunnel.Server;
 import me.smith_61.tunnel.exceptions.InvalidPacketException;
 
 /**
@@ -20,34 +19,72 @@ import me.smith_61.tunnel.exceptions.InvalidPacketException;
  * 
  * This class represents the base class for all network packets
  * 
- * The network packet format is:
+ * The network packet header format is:
  * 		id: byte
- * 		length: int
- * 		data: byte[length]
+ * 		sourceLength: int
+ * 		source: char[sourceLength]
+ * 		destinationLength: int
+ * 		destination: char[destinationLength]
+ * 		
  */
 public abstract class Packet {
 
 	private final int id;
 	
+	private char[] source = null;
+	private char[] destination = null;
+	
 	protected Packet(int id) {
 		this.id = id;
 	}
+	
+	protected Packet(int id, String source, String destination) {
+		this(id);
+		
+		this.source = source.toCharArray();
+		this.destination = destination.toCharArray();
+	}
+	
+	public String getSource() {
+		return new String(this.source);
+	}
+	
+	public String getDestination() {
+		return new String(this.destination);
+	}
+	
+	public abstract void handle(PacketHandler handler);
 	
 	protected abstract void writePacketData(DataOutput out) throws IOException;
 	
 	protected abstract void readPacketData(DataInput in) throws InvalidPacketException, IOException;
 	
 	protected boolean canWrite() {
-		return true;
+		return this.source != null && this.destination != null;
 	}
 	
-	protected abstract int getSize();
 	
-	public static void ensurePacketLength(ByteBuf buf) {
-		buf.skipBytes(1); //Skip ID field
-		int length = buf.readInt();
+	
+	
+	
+	public static char[] readCharArray(DataInput input) throws IOException {
+		int length = input.readInt();
+		if(length < 0) {
+			throw new IOException("Invalid length: " + length);
+		}
+		char[] chars = new char[length];
+		for(int i=0; i<length; i++) {
+			chars[i] = input.readChar();
+		}
 		
-		buf.skipBytes(length);
+		return chars;
+	}
+	
+	public static void writeCharArray(DataOutput output, char[] chars) throws IOException {
+		output.writeInt(chars.length);
+		for(int i=0; i<chars.length; i++) {
+			output.writeChar(chars[i]);
+		}
 	}
 	
 	public static Packet readPacket(byte[] data) throws InvalidPacketException {
@@ -55,7 +92,6 @@ public abstract class Packet {
 			DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
 			
 			int id = in.readUnsignedByte();
-			int length = in.readInt();
 			if(id >= PACKET_CLASSES.length || PACKET_CLASSES[id] == null) {
 				throw new InvalidPacketException(id);
 			}
@@ -66,8 +102,6 @@ public abstract class Packet {
 					con = PACKET_CONS[id] = PACKET_CLASSES[id].getDeclaredConstructor();
 				}
 				catch (NoSuchMethodException e) {
-					in.skipBytes(length);
-					
 					throw new InvalidPacketException(PACKET_CLASSES[id]);
 				}
 			}
@@ -79,6 +113,9 @@ public abstract class Packet {
 			catch(Throwable t) {
 				throw new InvalidPacketException("Exception while creating packet.", t);
 			}
+			
+			p.source = Packet.readCharArray(in);
+			p.destination = Packet.readCharArray(in);
 			
 			p.readPacketData(in);
 			
@@ -100,7 +137,9 @@ public abstract class Packet {
 			DataOutputStream dataOut = new DataOutputStream(byteOut);
 			
 			dataOut.writeByte(p.id);
-			dataOut.writeInt(p.getSize());
+			Packet.writeCharArray(dataOut, p.source);
+			Packet.writeCharArray(dataOut, p.destination);
+			
 			p.writePacketData(dataOut);
 			
 			return byteOut.toByteArray();
@@ -115,21 +154,23 @@ public abstract class Packet {
 		return PACKET_CLASSES[id];
 	}
 	
-	public static final int TOTAL_PACKETS = 3;
-	public static final int PACKET_HEADER_LENGTH = 1 + 4;
+	public static final int PROTOCOL_VERSION = 1;
+	
+	public static final int TOTAL_PACKETS = 2;
+	
 	
 	@SuppressWarnings("unchecked")
-	private static final Class<? extends Packet>[] PACKET_CLASSES = new Class[TOTAL_PACKETS];
+	private static final Class<? extends Packet>[] PACKET_CLASSES = new Class[TOTAL_PACKETS + 1];
 	
 	@SuppressWarnings("unchecked")
 	private static final Constructor<? extends Packet>[] PACKET_CONS = new Constructor[PACKET_CLASSES.length];
 	
 	
-	public static final int TUNNELEDPACKET_ID = 0x01;
-	public static final int MESSAGEPACKET_ID = 0x02;
+	public static final int MESSAGEPACKET_ID = 0x01;
+	public static final int DISCONNECTPACKET_ID = 0x02;
 	
 	static {
-		PACKET_CLASSES[TUNNELEDPACKET_ID] = TunneledPacket.class;
 		PACKET_CLASSES[MESSAGEPACKET_ID] = ChannelMessagePacket.class;
+		PACKET_CLASSES[DISCONNECTPACKET_ID] = DisconnectPacket.class;
 	}
 }

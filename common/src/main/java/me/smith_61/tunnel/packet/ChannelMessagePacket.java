@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.google.common.base.Preconditions;
 
+import me.smith_61.tunnel.Server;
 import me.smith_61.tunnel.exceptions.InvalidPacketException;
 
 /**
@@ -34,8 +35,8 @@ public class ChannelMessagePacket extends Packet {
 		data = null;
 	}
 	
-	public ChannelMessagePacket(String channel, byte[] data) {
-		super(Packet.MESSAGEPACKET_ID);
+	public ChannelMessagePacket(String source, String destination, String channel, byte[] data) {
+		super(Packet.MESSAGEPACKET_ID, source, destination);
 		String format = "%s can not be null.";
 		
 		Preconditions.checkNotNull(channel, format, "Channel");
@@ -60,10 +61,7 @@ public class ChannelMessagePacket extends Packet {
 
 	@Override
 	protected void writePacketData(DataOutput out) throws IOException {
-		out.writeInt(this.channel.length);
-		for(int i=0; i<this.channel.length; i++) {
-			out.writeChar(this.channel[i]);
-		}
+		Packet.writeCharArray(out, this.channel);
 		
 		out.writeInt(this.data.length);
 		out.write(this.data);
@@ -71,22 +69,16 @@ public class ChannelMessagePacket extends Packet {
 
 	@Override
 	protected void readPacketData(DataInput in) throws InvalidPacketException, IOException {
+		this.channel = Packet.readCharArray(in);
+		
 		int length = in.readInt();
-		
-		this.channel = new char[length];
-		for(int i=0; i<length; i++) {
-			this.channel[i] = in.readChar();
-		}
-		
-		length = in.readInt();
 		this.data = new byte[length];
 		
 		in.readFully(this.data);
 	}
 
 	@Override
-	protected int getSize() {
-		//Two ints + Char array + Byte array
-		return 8 + (this.channel.length * 2) + this.data.length;
+	public void handle(PacketHandler handler) {
+		handler.handleChannelMessage(this);
 	}
 }
