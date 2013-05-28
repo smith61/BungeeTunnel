@@ -14,7 +14,7 @@ public class ChannelMessagePacketTest {
 		for(int i=0; i<data.length; i++) {
 			data[i] = (byte)i;
 		}
-		ChannelMessagePacket write = new ChannelMessagePacket("TestServer", "TestServer", "TestChannel", data);
+		ChannelMessagePacket write = new ChannelMessagePacket("TestServer", "TestChannel", data);
 		
 		ChannelMessagePacket read = (ChannelMessagePacket)Packet.readPacket(Packet.writePacket(write));
 		

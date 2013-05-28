@@ -51,7 +51,7 @@ public abstract class Packet {
 	protected abstract void readPacketData(DataInput in) throws InvalidPacketException, IOException;
 	
 	protected boolean canWrite() {
-		return this.source != null && this.destination != null;
+		return this.source != null;
 	}
 	
 	
@@ -106,7 +106,6 @@ public abstract class Packet {
 			}
 			
 			p.source = Packet.readCharArray(in);
-			p.destination = Packet.readCharArray(in);
 			
 			p.readPacketData(in);
 			
@@ -129,7 +128,6 @@ public abstract class Packet {
 			
 			dataOut.writeByte(p.id);
 			Packet.writeCharArray(dataOut, p.source);
-			Packet.writeCharArray(dataOut, p.destination);
 			
 			p.writePacketData(dataOut);
 			

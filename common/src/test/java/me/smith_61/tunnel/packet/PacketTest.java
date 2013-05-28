@@ -12,12 +12,12 @@ public class PacketTest {
 
 	@Test
 	public void testWrite() throws IOException {
-		assertNotNull(Packet.writePacket(new ChannelMessagePacket("", "", "", new byte[0])));
+		assertNotNull(Packet.writePacket(new ChannelMessagePacket("", "", new byte[0])));
 	}
 
 	@Test
 	public void testRead() throws InvalidPacketException {
-		byte[] packet = Packet.writePacket(new ChannelMessagePacket("", "", "", new byte[0]));
+		byte[] packet = Packet.writePacket(new ChannelMessagePacket("", "", new byte[0]));
 		Packet p = Packet.readPacket(packet);
 		
 		assertNotNull(p);
