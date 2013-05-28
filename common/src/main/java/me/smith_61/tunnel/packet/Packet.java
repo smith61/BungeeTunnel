@@ -9,7 +9,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 
-import me.smith_61.tunnel.Server;
 import me.smith_61.tunnel.exceptions.InvalidPacketException;
 
 /**
@@ -22,9 +21,7 @@ import me.smith_61.tunnel.exceptions.InvalidPacketException;
  * The network packet header format is:
  * 		id: byte
  * 		sourceLength: int
- * 		source: char[sourceLength]
- * 		destinationLength: int
- * 		destination: char[destinationLength]
+ * 		source: String(UTF-8)
  * 		
  */
 public abstract class Packet {
@@ -32,25 +29,19 @@ public abstract class Packet {
 	private final int id;
 	
 	private char[] source = null;
-	private char[] destination = null;
 	
 	protected Packet(int id) {
 		this.id = id;
 	}
 	
-	protected Packet(int id, String source, String destination) {
+	protected Packet(int id, String source) {
 		this(id);
 		
 		this.source = source.toCharArray();
-		this.destination = destination.toCharArray();
 	}
 	
 	public String getSource() {
 		return new String(this.source);
-	}
-	
-	public String getDestination() {
-		return new String(this.destination);
 	}
 	
 	public abstract void handle(PacketHandler handler);

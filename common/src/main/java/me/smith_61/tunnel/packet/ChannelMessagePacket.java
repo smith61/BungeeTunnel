@@ -19,7 +19,7 @@ import me.smith_61.tunnel.exceptions.InvalidPacketException;
  * 
  * The data format for this message is:
  * 		channelLength: int
- * 		channel: char[channelLength]
+ * 		channel: String(UTF-8)
  * 		dataLength: int
  * 		data: byte[dataLength]
  */
@@ -35,8 +35,8 @@ public class ChannelMessagePacket extends Packet {
 		data = null;
 	}
 	
-	public ChannelMessagePacket(String source, String destination, String channel, byte[] data) {
-		super(Packet.MESSAGEPACKET_ID, source, destination);
+	public ChannelMessagePacket(String source, String channel, byte[] data) {
+		super(Packet.MESSAGEPACKET_ID, source);
 		String format = "%s can not be null.";
 		
 		Preconditions.checkNotNull(channel, format, "Channel");
