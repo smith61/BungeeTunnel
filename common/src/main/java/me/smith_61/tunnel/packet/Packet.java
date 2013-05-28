@@ -8,6 +8,7 @@ import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.nio.charset.Charset;
 
 import me.smith_61.tunnel.exceptions.InvalidPacketException;
 
@@ -28,20 +29,20 @@ public abstract class Packet {
 
 	private final int id;
 	
-	private char[] source = null;
+	private String source = null;
 	
-	protected Packet(int id) {
+	Packet(int id) {
 		this.id = id;
 	}
 	
-	protected Packet(int id, String source) {
+	Packet(int id, String source) {
 		this(id);
 		
-		this.source = source.toCharArray();
+		this.source = source;
 	}
 	
 	public String getSource() {
-		return new String(this.source);
+		return this.source;
 	}
 	
 	public abstract void handle(PacketHandler handler);
@@ -56,26 +57,20 @@ public abstract class Packet {
 	
 	
 	
-	
-	
-	public static char[] readCharArray(DataInput input) throws IOException {
+	public static String readString(DataInput input) throws IOException {
 		int length = input.readInt();
-		if(length < 0) {
-			throw new IOException("Invalid length: " + length);
-		}
-		char[] chars = new char[length];
-		for(int i=0; i<length; i++) {
-			chars[i] = input.readChar();
-		}
 		
-		return chars;
+		byte[] chars = new byte[length];
+		input.readFully(chars);
+		
+		return new String(chars, Charset.forName("UTF-8"));
 	}
 	
-	public static void writeCharArray(DataOutput output, char[] chars) throws IOException {
+	public static void writeString(DataOutput output, String string) throws IOException {
+		byte[] chars = string.getBytes(Charset.forName("UTF-8"));
+		
 		output.writeInt(chars.length);
-		for(int i=0; i<chars.length; i++) {
-			output.writeChar(chars[i]);
-		}
+		output.write(chars);
 	}
 	
 	public static Packet readPacket(byte[] data) throws InvalidPacketException {
@@ -105,7 +100,7 @@ public abstract class Packet {
 				throw new InvalidPacketException("Exception while creating packet.", t);
 			}
 			
-			p.source = Packet.readCharArray(in);
+			p.source = Packet.readString(in);
 			
 			p.readPacketData(in);
 			
@@ -127,7 +122,7 @@ public abstract class Packet {
 			DataOutputStream dataOut = new DataOutputStream(byteOut);
 			
 			dataOut.writeByte(p.id);
-			Packet.writeCharArray(dataOut, p.source);
+			Packet.writeString(dataOut, p.source);
 			
 			p.writePacketData(dataOut);
 			
@@ -145,7 +140,7 @@ public abstract class Packet {
 	
 	public static final int PROTOCOL_VERSION = 1;
 	
-	public static final int TOTAL_PACKETS = 2;
+	public static final int TOTAL_PACKETS = 5;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -155,11 +150,18 @@ public abstract class Packet {
 	private static final Constructor<? extends Packet>[] PACKET_CONS = new Constructor[PACKET_CLASSES.length];
 	
 	
-	public static final int MESSAGEPACKET_ID = 0x01;
-	public static final int DISCONNECTPACKET_ID = 0x02;
+	public static final int MESSAGEPACKET_ID = 1;
+	public static final int DISCONNECTPACKET_ID = 2;
+	public static final int SERVERREGISTEREDPACKET_ID = 3;
+	public static final int CHANNELREGISTEREDPACKET_ID = 4;
+	public static final int CHANNELUNREGISTEREDPACKET_ID = 5;
+	
 	
 	static {
 		PACKET_CLASSES[MESSAGEPACKET_ID] = ChannelMessagePacket.class;
 		PACKET_CLASSES[DISCONNECTPACKET_ID] = DisconnectPacket.class;
+		PACKET_CLASSES[SERVERREGISTEREDPACKET_ID] = ServerConnectedPacket.class;
+		PACKET_CLASSES[CHANNELREGISTEREDPACKET_ID] = ChannelRegisteredPacket.class;
+		PACKET_CLASSES[CHANNELUNREGISTEREDPACKET_ID] = ChannelUnregisteredPacket.class;
 	}
 }

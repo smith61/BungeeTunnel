@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import com.google.common.base.Preconditions;
 
-import me.smith_61.tunnel.Server;
 import me.smith_61.tunnel.exceptions.InvalidPacketException;
 
 /**
@@ -25,7 +24,7 @@ import me.smith_61.tunnel.exceptions.InvalidPacketException;
  */
 public class ChannelMessagePacket extends Packet {
 
-	private char[] channel;
+	private String channel;
 	private byte[] data;
 	
 	ChannelMessagePacket() {
@@ -42,12 +41,12 @@ public class ChannelMessagePacket extends Packet {
 		Preconditions.checkNotNull(channel, format, "Channel");
 		Preconditions.checkNotNull(data, format, "Data");
 		
-		this.channel = channel.toCharArray();
+		this.channel = channel;
 		this.data = data;
 	}
 	
 	public String getChannel() {
-		return new String(this.channel);
+		return this.channel;
 	}
 	
 	public byte[] getData() {
@@ -61,7 +60,7 @@ public class ChannelMessagePacket extends Packet {
 
 	@Override
 	protected void writePacketData(DataOutput out) throws IOException {
-		Packet.writeCharArray(out, this.channel);
+		Packet.writeString(out, this.channel);
 		
 		out.writeInt(this.data.length);
 		out.write(this.data);
@@ -69,7 +68,7 @@ public class ChannelMessagePacket extends Packet {
 
 	@Override
 	protected void readPacketData(DataInput in) throws InvalidPacketException, IOException {
-		this.channel = Packet.readCharArray(in);
+		this.channel = Packet.readString(in);
 		
 		int length = in.readInt();
 		this.data = new byte[length];

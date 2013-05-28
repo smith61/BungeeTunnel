@@ -8,10 +8,10 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.GenericFutureListener;
 import me.smith_61.tunnel.ErrorHandler;
 import me.smith_61.tunnel.Server;
-import me.smith_61.tunnel.ServerManager;
 import me.smith_61.tunnel.ServerTunnel;
 import me.smith_61.tunnel.exceptions.TunnelClosedException;
 import me.smith_61.tunnel.exceptions.TunnelWriteException;
+import me.smith_61.tunnel.netty.TunneledPacket;
 import me.smith_61.tunnel.packet.ChannelMessagePacket;
 import me.smith_61.tunnel.packet.DisconnectPacket;
 import me.smith_61.tunnel.packet.Packet;
@@ -53,7 +53,7 @@ public class ServerConnection implements ServerTunnel {
 		byte[] newData = new byte[length];
 		System.arraycopy(data, start, newData, 0, length);
 		
-		ChannelFuture future = this.sendPacket(new ChannelMessagePacket(this.getThisServerName(), this.getServer().getName(), channel, newData));
+		ChannelFuture future = this.sendPacket(new ChannelMessagePacket(this.getThisServerName(), channel, newData));
 		if(handler != null) {
 			future.addListener(new GenericFutureListener<ChannelFuture>() {
 
@@ -90,7 +90,7 @@ public class ServerConnection implements ServerTunnel {
 			if(this.closeLock.tryLock()) {
 				this.isClosed = true;
 				if(this.channel.isActive()) {
-					this.sendPacket(new DisconnectPacket(this.getThisServerName(), this.getServer().getName(), reason));
+					this.sendPacket(new DisconnectPacket(this.getThisServerName(), reason));
 				}
 			}
 			
@@ -99,7 +99,7 @@ public class ServerConnection implements ServerTunnel {
 	}
 	
 	public ChannelFuture sendPacket(Packet packet) {
-		return this.channel.write(packet);
+		return this.channel.write(new TunneledPacket(this.getServer().getName(), packet));
 	}
 	
 	private String getThisServerName() {
