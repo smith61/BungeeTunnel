@@ -1,5 +1,13 @@
 package me.smith_61.tunnel.server;
 
+/**
+ * 
+ * @author Jacob
+ * @since 1.0.0
+ * 
+ * Listener interface to listen for data sent
+ *  over a channel
+ */
 public interface ChannelDataListener {
 
 	/**

@@ -1,5 +1,14 @@
 package me.smith_61.tunnel.concurrent;
 
+/**
+ * 
+ * @author Jacob
+ * @since 1.0.0
+ * 
+ * Callback used when a Future has been completed
+ * 
+ * @param <F> Future subclass type
+ */
 public interface FutureListener<F extends Future<?>> {
 
 	/**
